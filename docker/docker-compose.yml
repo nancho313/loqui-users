@@ -1,0 +1,11 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb-loqui
+    ports:
+      - "27017:27017"
+networks:
+  default:
+    driver: bridge
