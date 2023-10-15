@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Document("user")
 public record UserDocument(@Id String id,
                            String username,
-                           String password,
                            String email,
                            LocalDateTime creationDate,
                            LocalDateTime lastUpdatedDate) {

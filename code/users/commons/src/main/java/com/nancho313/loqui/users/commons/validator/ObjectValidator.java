@@ -29,8 +29,8 @@ public class ObjectValidator {
         return !isNull(value);
     }
 
-    public static List<?> getImmutableList(List<?> list) {
+    public static <T> List<T> getImmutableList(List<T> list) {
 
-        return list == null ? Collections.emptyList() : list.stream().map(Objects::nonNull).toList();
+        return list == null ? Collections.emptyList() : List.copyOf(list);
     }
 }

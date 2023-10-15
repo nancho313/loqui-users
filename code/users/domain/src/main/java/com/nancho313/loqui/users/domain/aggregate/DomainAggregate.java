@@ -1,5 +1,6 @@
 package com.nancho313.loqui.users.domain.aggregate;
 
+import com.nancho313.loqui.users.commons.validator.ObjectValidator;
 import com.nancho313.loqui.users.domain.event.DomainEvent;
 import lombok.Getter;
 
@@ -11,6 +12,6 @@ public abstract class DomainAggregate {
     private final List<DomainEvent> currentEvents;
 
     protected DomainAggregate(List<DomainEvent> currentEvents) {
-        this.currentEvents = List.copyOf(currentEvents);
+        this.currentEvents = ObjectValidator.getImmutableList(currentEvents);
     }
 }

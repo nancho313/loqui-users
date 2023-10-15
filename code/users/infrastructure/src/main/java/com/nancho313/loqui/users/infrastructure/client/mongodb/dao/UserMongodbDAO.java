@@ -4,4 +4,8 @@ import com.nancho313.loqui.users.infrastructure.client.mongodb.document.UserDocu
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface UserMongodbDAO extends MongoRepository<UserDocument, String> {
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }

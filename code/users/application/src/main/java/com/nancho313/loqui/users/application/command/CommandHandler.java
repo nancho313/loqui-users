@@ -2,6 +2,7 @@ package com.nancho313.loqui.users.application.command;
 
 import com.nancho313.loqui.users.application.exception.InvalidCommandDataException;
 import com.nancho313.loqui.users.application.exception.InvalidResponseDataException;
+import com.nancho313.loqui.users.domain.event.DomainEvent;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
@@ -20,11 +21,19 @@ public abstract class CommandHandler<T extends Command, V extends Response> {
 
         validateCommand(command);
         var result = handleCommand(command);
-        validateResponse(result);
-        return result;
+        processEvents(result.events);
+        validateResponse(result.response);
+        return result.response;
     }
 
-    protected abstract V handleCommand(T command);
+    protected abstract HandleCommandResult<V> handleCommand(T command);
+
+    protected abstract void processEvents(List<DomainEvent> events);
+
+    protected HandleCommandResult<V> buildResult(V response, List<DomainEvent> events) {
+
+        return new HandleCommandResult<>(response, events);
+    }
 
     private void validateCommand(T data) {
 
@@ -48,4 +57,6 @@ public abstract class CommandHandler<T extends Command, V extends Response> {
         Set<ConstraintViolation<Y>> violations = validator.validate(data);
         return violations.stream().map(ConstraintViolation::getMessage).toList();
     }
+
+    protected record HandleCommandResult <V extends Response> (V response, List<DomainEvent> events) {}
 }

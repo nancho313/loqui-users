@@ -2,7 +2,7 @@ package com.nancho313.loqui.users.infrastructure.repository;
 
 import com.nancho313.loqui.users.domain.aggregate.User;
 import com.nancho313.loqui.users.domain.repository.UserRepository;
-import com.nancho313.loqui.users.domain.vo.IdUser;
+import com.nancho313.loqui.users.domain.vo.UserId;
 import com.nancho313.loqui.users.infrastructure.client.mongodb.dao.UserMongodbDAO;
 import com.nancho313.loqui.users.infrastructure.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(IdUser id) {
-        return dao.findById(id.id()).map(mapper::toEntity);
+    public Optional<User> findById(UserId userId) {
+        return dao.findById(userId.id()).map(mapper::toEntity);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return dao.existsByUsername(username);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return dao.existsByEmail(email);
     }
 }

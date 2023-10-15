@@ -5,11 +5,11 @@ import java.util.List;
 
 import static com.nancho313.loqui.users.commons.validator.ObjectValidator.isEmptyString;
 
-public record IdUser(String id) {
+public record UserId(String id) {
 
-    private static final String ERROR_MESSAGE = "Cannot create an IdUser object. Errors -> %s";
+    private static final String ERROR_MESSAGE = "Cannot create an UserId object. Errors -> %s";
 
-    public IdUser {
+    public UserId {
 
         List<String> errors = new ArrayList<>();
         if (isEmptyString(id)) {
