@@ -6,10 +6,11 @@ import com.nancho313.loqui.users.domain.event.DomainEvent;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public abstract class CommandHandler<T extends Command, V extends Response> {
+public abstract class CommandHandler<T extends Command, V extends CommandResponse> {
 
     private final Validator validator;
 
@@ -33,6 +34,11 @@ public abstract class CommandHandler<T extends Command, V extends Response> {
     protected HandleCommandResult<V> buildResult(V response, List<DomainEvent> events) {
 
         return new HandleCommandResult<>(response, events);
+    }
+    
+    protected HandleCommandResult<V> buildEventlessResult(V response) {
+        
+        return new HandleCommandResult<>(response, Collections.emptyList());
     }
 
     private void validateCommand(T data) {
@@ -58,5 +64,5 @@ public abstract class CommandHandler<T extends Command, V extends Response> {
         return violations.stream().map(ConstraintViolation::getMessage).toList();
     }
 
-    protected record HandleCommandResult <V extends Response> (V response, List<DomainEvent> events) {}
+    protected record HandleCommandResult <V extends CommandResponse> (V response, List<DomainEvent> events) {}
 }

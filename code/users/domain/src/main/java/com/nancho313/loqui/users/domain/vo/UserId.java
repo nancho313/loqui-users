@@ -3,7 +3,7 @@ package com.nancho313.loqui.users.domain.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nancho313.loqui.users.commons.validator.ObjectValidator.isEmptyString;
+import static com.nancho313.loqui.commons.ObjectValidator.isEmptyString;
 
 public record UserId(String id) {
 
@@ -21,5 +21,9 @@ public record UserId(String id) {
 
             throw new IllegalArgumentException(ERROR_MESSAGE.formatted(errors));
         }
+    }
+    
+    public static UserId of(String userId) {
+        return new UserId(userId);
     }
 }

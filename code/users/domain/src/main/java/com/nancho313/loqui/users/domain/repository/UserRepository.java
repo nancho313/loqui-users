@@ -6,12 +6,16 @@ import com.nancho313.loqui.users.domain.vo.UserId;
 import java.util.Optional;
 
 public interface UserRepository {
-
-    User save(User user);
-
-    Optional<User> findById(UserId id);
-
-    boolean existsByUsername(String username);
-
-    boolean existsByEmail(String email);
+  
+  User save(User user);
+  
+  Optional<User> findById(UserId id);
+  
+  boolean existsByUsername(String username);
+  
+  boolean existsByEmail(String email);
+  
+  boolean existsById(UserId requestedUserId);
+  
+  void addContact(UserId userId, UserId contactId);
 }

@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nancho313.loqui.users.commons.validator.ObjectValidator.isNotNull;
-import static com.nancho313.loqui.users.commons.validator.ObjectValidator.isNull;
+import static com.nancho313.loqui.commons.ObjectValidator.isNotNull;
+import static com.nancho313.loqui.commons.ObjectValidator.isNull;
 
 public record CurrentDate(LocalDateTime creationDate, LocalDateTime lastUpdatedDate) {
 

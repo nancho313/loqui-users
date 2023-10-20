@@ -1,6 +1,6 @@
 package com.nancho313.loqui.users.domain.aggregate;
 
-import com.nancho313.loqui.users.commons.validator.ObjectValidator;
+import com.nancho313.loqui.commons.ObjectValidator;
 import com.nancho313.loqui.users.domain.event.DomainEvent;
 import lombok.Getter;
 
