@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,6 +16,7 @@ import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.Optional;
 
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
   
   private final SecretKey jwtKey;
@@ -37,6 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
       
     } catch (JwtException e) {
       
+      log.error("Access denied", e);
       throw new AccessDeniedException("Access denied");
     }
   }

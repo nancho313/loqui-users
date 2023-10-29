@@ -2,6 +2,7 @@ package com.nancho313.loqui.users.infrastructure.mapper;
 
 import com.nancho313.loqui.users.domain.aggregate.ContactRequest;
 import com.nancho313.loqui.users.infrastructure.client.mongodb.document.ContactRequestDocument;
+import com.nancho313.loqui.users.projection.model.ContactRequestModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -21,4 +22,6 @@ public interface ContactRequestMapper {
   @Mapping(target = "creationDate", source = "currentDate.creationDate")
   @Mapping(target = "lastUpdatedDate", source = "currentDate.lastUpdatedDate")
   ContactRequestDocument toDocument(ContactRequest entity);
+  
+  ContactRequestModel toProjection(ContactRequestDocument document);
 }

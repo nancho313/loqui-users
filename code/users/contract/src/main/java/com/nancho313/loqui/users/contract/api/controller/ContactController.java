@@ -4,10 +4,14 @@ import com.nancho313.loqui.users.application.command.CommandHandler;
 import com.nancho313.loqui.users.application.command.EmptyCommandResponse;
 import com.nancho313.loqui.users.application.command.contactrequest.command.AddNewContactCommand;
 import com.nancho313.loqui.users.application.command.contactrequest.command.ProcessContactRequestCommand;
+import com.nancho313.loqui.users.application.query.QueryHandler;
+import com.nancho313.loqui.users.application.query.contactrequest.dto.ContactRequestDataDto;
+import com.nancho313.loqui.users.application.query.contactrequest.query.GetPendingContactRequestsQuery;
+import com.nancho313.loqui.users.application.query.contactrequest.response.GetPendingContactRequestsQueryResponse;
+import com.nancho313.loqui.users.application.query.user.query.SearchContactsQuery;
+import com.nancho313.loqui.users.application.query.user.response.SearchContactsQueryResponse;
 import com.nancho313.loqui.users.contract.api.config.AuthUser;
-import com.nancho313.loqui.users.contract.api.dto.AddNewContactApiRequest;
-import com.nancho313.loqui.users.contract.api.dto.GetContactRequestsApiResponse;
-import com.nancho313.loqui.users.contract.api.dto.ProcessContactRequestApiRequest;
+import com.nancho313.loqui.users.contract.api.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +25,19 @@ public class ContactController {
   
   private final CommandHandler<ProcessContactRequestCommand, EmptyCommandResponse> processContactRequestCommandHandler;
   
+  private final QueryHandler<SearchContactsQuery, SearchContactsQueryResponse> searchContactsCommandHandler;
+  
+  private final QueryHandler<GetPendingContactRequestsQuery, GetPendingContactRequestsQueryResponse> getPendingContactRequestsQueryHandler;
+  
   @GetMapping
-  public ResponseEntity<String> searchContacts() {
+  public ResponseEntity<SearchContactsApiResponse> searchContacts(@RequestAttribute("authUser") AuthUser authUser) {
     
-    return null;
+    var query = new SearchContactsQuery(authUser.userId());
+    var response = searchContactsCommandHandler.execute(query);
+    var result =
+            new SearchContactsApiResponse(response.contacts().stream().map(contact -> new ContactApiDto(new UserApiDto(contact.user().id(),
+                    contact.user().username(), contact.user().email()), contact.status())).toList());
+    return ResponseEntity.ok(result);
   }
   
   @PostMapping("/request")
@@ -49,8 +62,17 @@ public class ContactController {
   @GetMapping("/request")
   public ResponseEntity<GetContactRequestsApiResponse> getContactRequests(@RequestAttribute("authUser") AuthUser authUser) {
     
-    var response = new GetContactRequestsApiResponse();
-    return ResponseEntity.ok(response);
+    var query = new GetPendingContactRequestsQuery(authUser.userId());
+    var queryResponse = getPendingContactRequestsQueryHandler.execute(query);
+    var sentRequests = queryResponse.sentRequests().stream().map(this::toContactRequest).toList();
+    var receivedRequests = queryResponse.receivedRequests().stream().map(this::toContactRequest).toList();
+    var result = new GetContactRequestsApiResponse(sentRequests, receivedRequests);
+    return ResponseEntity.ok(result);
   }
   
+  private GetContactRequestsApiResponse.ContactRequest toContactRequest(ContactRequestDataDto dto) {
+    
+    return new GetContactRequestsApiResponse.ContactRequest(dto.id(), dto.requestedUser(), dto.requesterUser(),
+            dto.message(), dto.creationDate());
+  }
 }
