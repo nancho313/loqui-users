@@ -10,7 +10,9 @@ import jakarta.validation.Validator;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.nancho313.loqui.commons.ObjectValidator.isNotAnEmptyString;
 
@@ -27,7 +29,7 @@ public class SearchUserQueryHandler extends QueryHandler<SearchUserQuery, Search
     @Override
     protected SearchUserQueryResponse executeQuery(SearchUserQuery query) {
 
-        List<UserModel> result = new ArrayList<>();
+        Set<UserModel> result = new HashSet<>();
 
         if (isNotAnEmptyString(query.username())) {
 

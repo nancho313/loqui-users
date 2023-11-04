@@ -23,8 +23,8 @@ public class UserNeo4jDAO {
               id: "%s",
               username: "%s",
               email: "%s",
-              creationDate: datetime("%s"),
-              lastUpdatedDate: datetime("%s")
+              creationDate: localdatetime("%s"),
+              lastUpdatedDate: localdatetime("%s")
             }
           )
           RETURN n;
@@ -34,8 +34,8 @@ public class UserNeo4jDAO {
           SET n = {
                     username: "%s",
                     email: "%s",
-                    creationDate: datetime("%s"),
-                    lastUpdatedDate: datetime("%s")
+                    creationDate: localdatetime("%s"),
+                    lastUpdatedDate: localdatetime("%s")
                   }
           RETURN n;
           """;
@@ -44,18 +44,20 @@ public class UserNeo4jDAO {
   
   public UserNode save(UserNode userNode) {
     
-    UserNode result;
+    Collection<Map<String, Object>> result;
     
     if (existsById(userNode.id())) {
       
       result = neo4jClient.query(UPDATE_QUERY.formatted(userNode.id(), userNode.username(), userNode.email(),
-              userNode.creationDate(), userNode.lastUpdatedDate())).fetchAs(UserNode.class).one().get();
+              userNode.creationDate(),
+              userNode.lastUpdatedDate())).fetch().all();
     } else {
       result = neo4jClient.query(CREATE_QUERY.formatted(userNode.id(), userNode.username(), userNode.email(),
-              userNode.creationDate(), userNode.lastUpdatedDate())).fetchAs(UserNode.class).one().get();
+              userNode.creationDate(),
+              userNode.lastUpdatedDate())).fetch().all();
     }
     
-    return result;
+    return asUserNodes(result).get(0);
   }
   
   public void addContact(String principal, String target, String status) {
@@ -92,7 +94,7 @@ public class UserNeo4jDAO {
     
     var query = """
             MATCH (n:User {id: '%s'})
-            MATCH (b:User)-[r:CONTACT]-(n)
+            OPTIONAL MATCH (b:User)-[r:CONTACT]-(n)
             RETURN n,r,b;
             """;
     
@@ -221,6 +223,4 @@ public class UserNeo4jDAO {
     }).toList();
     return result;
   }
-  
-  
 }
