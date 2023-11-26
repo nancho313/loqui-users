@@ -35,8 +35,14 @@ jobs:
       run: |
         curl https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml?token=GHSAT0AAAAAACKY7Y2774PWPQ5EUMVGKDXOZLCXT3A
 
+    - name: Debug settings.xml
+      run: cat $GITHUB_WORKSPACE/settings.xml
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+      env:
+        GITHUB_ACTOR: nancho313
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
