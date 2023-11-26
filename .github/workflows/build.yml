@@ -33,7 +33,7 @@ jobs:
       env:
         TOKEN: ${{ secrets.LOQUI_DEVOPS_TOKEN }}
       run: |
-        curl -H "Authorization: token ${TOKEN}" https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml
+        curl https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml?token=GHSAT0AAAAAACKY7Y2774PWPQ5EUMVGKDXOZLCXT3A
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
