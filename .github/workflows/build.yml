@@ -31,7 +31,7 @@ jobs:
 
     - name: Get Settings.xml
       env:
-        TOKEN: ${{ secrets.loqui_devops_token }}
+        TOKEN: ${{ secrets.LOQUI_DEVOPS_TOKEN }}
       run: |
         curl -H "Authorization: token ${TOKEN}" https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml
 
