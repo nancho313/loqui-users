@@ -1,14 +1,11 @@
 package com.nancho313.loqui.users.domain.entity;
 
 import com.nancho313.loqui.users.domain.vo.ContactStatus;
-import com.nancho313.loqui.users.domain.vo.CurrentDate;
 import com.nancho313.loqui.users.domain.vo.UserId;
-import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nancho313.loqui.commons.ObjectValidator.isEmptyString;
 import static com.nancho313.loqui.commons.ObjectValidator.isNull;
 
 public record Contact(UserId id, ContactStatus status) {

@@ -51,7 +51,7 @@ public class AddContactToUserCommandHandler extends CommandHandler<AddContactToU
       switch (event) {
         
         case User.AddedContactEvent addedContactEvent ->
-                userRepository.addContact(addedContactEvent.userId(), addedContactEvent.contactId());
+                userRepository.addContact(addedContactEvent.getUserId(), addedContactEvent.getContactId());
         default -> log.warn("Event not supported {}", event);
       }
     });

@@ -168,7 +168,6 @@ public class ContactRequest extends DomainAggregate {
     }
   }
   
-  
   public record CreatedContactRequestEvent(ContactRequestId contactRequestId, UserId requesterUser,
                                            UserId requestedUser, LocalDateTime creationDate) implements DomainEvent {
   }
