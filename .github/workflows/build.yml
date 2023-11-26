@@ -33,7 +33,7 @@ jobs:
       env:
         TOKEN: ${{ secrets.LOQUI_DEVOPS_TOKEN }}
       run: |
-        curl https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml?token=GHSAT0AAAAAACKY7Y2774PWPQ5EUMVGKDXOZLCXT3A
+        curl -o settings.xml https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml?token=GHSAT0AAAAAACKY7Y2774PWPQ5EUMVGKDXOZLCXT3A
 
     - name: Debug settings.xml
       run: cat $GITHUB_WORKSPACE/code/users/settings.xml
