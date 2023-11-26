@@ -4,12 +4,7 @@
 name: Maven Package
 
 on:
-  workflow_dispatch:    
-    inputs:        
-      tags:
-        description: 'Test scenario tags'
-        required: true
-        type: string
+  workflow_dispatch:
   release:
     types: [created]
 
@@ -33,6 +28,12 @@ jobs:
         distribution: 'temurin'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    - name: Get Settings.xml
+      env:
+        TOKEN: ${{ secrets.loqui_devops_token }}
+      run: |
+        curl -H "Authorization: token ${TOKEN}" https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
