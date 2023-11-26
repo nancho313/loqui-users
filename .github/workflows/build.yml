@@ -42,9 +42,10 @@ jobs:
       run: mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/code/users/settings.xml
       env:
         GITHUB_ACTOR: nancho313
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.LOQUI_POM_TOKEN }}
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/code/users/settings.xml
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_ACTOR: nancho313
+        GITHUB_TOKEN: ${{ secrets.LOQUI_POM_TOKEN }}
