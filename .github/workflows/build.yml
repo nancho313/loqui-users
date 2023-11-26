@@ -1,16 +1,12 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
-
-name: Maven Package
+name: Build Java Project
 
 on:
   workflow_dispatch:
-  release:
-    types: [created]
-
+  push:
+    branches:
+      - main
 jobs:
   build:
-
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -29,21 +25,15 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - name: Get Settings.xml      
+    - name: Get Settings.xml
+      env:
+        READ_FILES_TOKEN: ${{ secrets.READ_FILES_TOKEN }}
       run: |
-        curl -o settings.xml https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml?token=GHSAT0AAAAAACKY7Y26VDZAL4IEZLUVZOPKZLC2DMQ
-
-    - name: Debug settings.xml
-      run: cat $GITHUB_WORKSPACE/code/users/settings.xml
+        curl -o settings.xml https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml?token=$READ_FILES_TOKEN
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/code/users/settings.xml
+      run: mvn test --file pom.xml -s $GITHUB_WORKSPACE/code/users/settings.xml
       env:
         MVN_USERNAME: nancho313
         MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/code/users/settings.xml
-      env:
-        MVN_USERNAME: nancho313
-        MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
