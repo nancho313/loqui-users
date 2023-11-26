@@ -29,9 +29,7 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - name: Get Settings.xml
-      env:
-        TOKEN: ${{ secrets.LOQUI_DEVOPS_TOKEN }}
+    - name: Get Settings.xml      
       run: |
         curl -o settings.xml https://raw.githubusercontent.com/nancho313/loqui-devops/main/workflows/java/settings.xml?token=GHSAT0AAAAAACKY7Y2774PWPQ5EUMVGKDXOZLCXT3A
 
@@ -39,13 +37,13 @@ jobs:
       run: cat $GITHUB_WORKSPACE/code/users/settings.xml
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/code/users/settings.xml -Drepo.pwd=$GITHUB_TOKEN
+      run: mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/code/users/settings.xml
       env:
-        GITHUB_ACTOR: nancho313
-        GITHUB_TOKEN: ${{ secrets.LOQUI_POM_TOKEN }}
+        MVN_USERNAME: nancho313
+        MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/code/users/settings.xml -Drepo.pwd=$GITHUB_TOKEN
+      run: mvn deploy -s $GITHUB_WORKSPACE/code/users/settings.xml
       env:
-        GITHUB_ACTOR: nancho313
-        GITHUB_TOKEN: ${{ secrets.LOQUI_POM_TOKEN }}
+        MVN_USERNAME: nancho313
+        MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
