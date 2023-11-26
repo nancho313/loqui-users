@@ -30,6 +30,7 @@ public class ContactRequest extends DomainAggregate {
   
   private static final String INVALID_STATUS_PERMUTATION_ERROR_MESSAGE = "Invalid status permutation. The " +
           "ContactRequest %s cannot change from %s to %s.";
+  private static final String NULL_REQUESTED_USER_ID_ERROR_MESSAGE = "The requested user id cannot be null.";
   
   ContactRequestId contactRequestId;
   
@@ -79,7 +80,7 @@ public class ContactRequest extends DomainAggregate {
     
     if (isNull(requestedUserId)) {
       
-      throw new IllegalArgumentException("The requested user id cannot be null.");
+      throw new IllegalArgumentException(NULL_REQUESTED_USER_ID_ERROR_MESSAGE);
     }
     
     if (!requestedUser.equals(requestedUserId)) {
