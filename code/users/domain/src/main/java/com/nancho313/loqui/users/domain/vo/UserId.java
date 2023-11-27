@@ -6,24 +6,24 @@ import java.util.List;
 import static com.nancho313.loqui.commons.ObjectValidator.isEmptyString;
 
 public record UserId(String id) {
-
-    private static final String ERROR_MESSAGE = "Cannot create an UserId object. Errors -> %s";
-
-    public UserId {
-
-        List<String> errors = new ArrayList<>();
-        if (isEmptyString(id)) {
-
-            errors.add("The id cannot be empty.");
-        }
-
-        if (!errors.isEmpty()) {
-
-            throw new IllegalArgumentException(ERROR_MESSAGE.formatted(errors));
-        }
+  
+  private static final String ERROR_MESSAGE = "Cannot create an UserId object. Errors -> %s";
+  
+  public UserId {
+    
+    List<String> errors = new ArrayList<>();
+    if (isEmptyString(id)) {
+      
+      errors.add("The id cannot be empty.");
     }
     
-    public static UserId of(String userId) {
-        return new UserId(userId);
+    if (!errors.isEmpty()) {
+      
+      throw new IllegalArgumentException(ERROR_MESSAGE.formatted(errors));
     }
+  }
+  
+  public static UserId of(String userId) {
+    return new UserId(userId);
+  }
 }

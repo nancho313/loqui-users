@@ -32,6 +32,7 @@ public class UserNeo4jDAO {
   private static final String UPDATE_QUERY = """
           MATCH (n:User {id: "%s"})
           SET n = {
+                    id: "%s",
                     username: "%s",
                     email: "%s",
                     creationDate: localdatetime("%s"),
@@ -48,7 +49,7 @@ public class UserNeo4jDAO {
     
     if (existsById(userNode.id())) {
       
-      result = neo4jClient.query(UPDATE_QUERY.formatted(userNode.id(), userNode.username(), userNode.email(),
+      result = neo4jClient.query(UPDATE_QUERY.formatted(userNode.id(), userNode.id(), userNode.username(), userNode.email(),
               userNode.creationDate(),
               userNode.lastUpdatedDate())).fetch().all();
     } else {
