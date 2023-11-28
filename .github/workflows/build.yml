@@ -40,7 +40,7 @@ jobs:
         restore-keys: ${{ runner.os }}-sonar
 
     - name: Run Unit-Integration Tests
-      run: mvn -B verify -s $GITHUB_WORKSPACE/code/users/settings.xml
+      run: mvn -B install verify -s $GITHUB_WORKSPACE/code/users/settings.xml
       env:
         MVN_USERNAME: nancho313
         MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
