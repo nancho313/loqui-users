@@ -47,7 +47,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish Coverage to Sonarcloud
-      run: cd jacoco-coverage && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=nancho313_loqui-users -s $GITHUB_WORKSPACE/code/users/settings.xml
+      run: cd jacoco-coverage && mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=nancho313_loqui-users -s $GITHUB_WORKSPACE/code/users/settings.xml
       env:
         MVN_USERNAME: nancho313
         MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
