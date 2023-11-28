@@ -95,7 +95,7 @@
                         <id>before-integration-test-execution</id>
                         <phase>pre-integration-test</phase>
                         <goals>
-                            <goal>prepare-agent-integration</goal>
+                            <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
@@ -104,6 +104,9 @@
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
