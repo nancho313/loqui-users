@@ -6,17 +6,6 @@ services:
     container_name: mongodb-loqui
     ports:
       - "27017:27017"
-  rabbitmq:
-    image: nancho313/rabbitmq-stomp:latest
-    restart: always
-    container_name: rabbitmq-loqui
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-      - "61613:61613"
   neo4j:
     image: neo4j:latest
     restart: always
