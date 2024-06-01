@@ -24,8 +24,8 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.organization>nancho313</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-<!--        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>-->
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/jacoco-coverage/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.jacoco.itReportPath>${project.basedir}/jacoco-coverage/target/site/jacoco/jacoco.xml</sonar.jacoco.itReportPath>
     </properties>
 
     <dependencyManagement>
