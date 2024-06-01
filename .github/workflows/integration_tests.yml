@@ -36,7 +36,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
 
     - name: Build with Maven
-      run: mvn clean install -DskipTests && mvn -B failsafe:integration-test -s $GITHUB_WORKSPACE/code/users/settings.xml
+      run: mvn clean compile test-compile -DskipTests && mvn -B failsafe:integration-test -s $GITHUB_WORKSPACE/code/users/settings.xml
       env:
         MVN_USERNAME: nancho313
         MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
