@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepositoryNeo4jImpl implements UserRepository {
+public class UserRepositoryImpl implements UserRepository {
   
   private final UserNeo4jDAO dao;
   
