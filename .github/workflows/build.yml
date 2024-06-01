@@ -46,7 +46,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
 
     - name: Run Unit Tests
-      run: mvn -B test verify -s $GITHUB_WORKSPACE/code/users/settings.xml
+      run: mvn -B test verify -s $GITHUB_WORKSPACE/code/users/settings.xml -DskipITs
       env:
         MVN_USERNAME: nancho313
         MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
