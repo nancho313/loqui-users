@@ -12,9 +12,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AddNewContactCommandHandlerTest {
   
@@ -58,5 +60,27 @@ class AddNewContactCommandHandlerTest {
             .allMatch(contactRequest -> contactRequest.getRequesterUser().equals(user1.getId())
                     && contactRequest.getRequestedUser().equals(user2.getId())
                     && contactRequest.getStatus().equals(ContactRequestStatus.PENDING));
+  }
+
+  @Test
+  void handleThrowsExceptionDueContactIdDoesNotExist() {
+
+    // Arrange
+    var userId = UUID.randomUUID().toString();
+    var contactId = UUID.randomUUID().toString();
+    var initialMessage = "This is the initial message";
+
+    var user1 = User.createUser(UserId.of(userId), "foo1", "foo1@email.com");
+
+    userRepositorySpy.save(user1);
+
+    var command = new AddNewContactCommand(userId, contactId, initialMessage);
+
+    // Act & Assert
+    var exception = assertThrows(NoSuchElementException.class, () -> sut.handle(command));
+    assertThat(exception.getMessage()).isEqualTo("The user with the id "+contactId+" does not exist.");
+
+
+
   }
 }
