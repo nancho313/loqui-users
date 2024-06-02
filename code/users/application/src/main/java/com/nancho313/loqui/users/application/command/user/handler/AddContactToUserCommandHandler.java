@@ -5,6 +5,7 @@ import com.nancho313.loqui.users.application.command.EmptyCommandResponse;
 import com.nancho313.loqui.users.application.command.user.command.AddContactToUserCommand;
 import com.nancho313.loqui.users.domain.aggregate.User;
 import com.nancho313.loqui.users.domain.event.DomainEvent;
+import com.nancho313.loqui.users.domain.event.EventResolverFactory;
 import com.nancho313.loqui.users.domain.repository.UserRepository;
 import com.nancho313.loqui.users.domain.vo.UserId;
 import jakarta.validation.Validator;
@@ -19,10 +20,12 @@ import java.util.NoSuchElementException;
 public class AddContactToUserCommandHandler extends CommandHandler<AddContactToUserCommand, EmptyCommandResponse> {
   
   private static final String USER_NOT_FOUND_ERROR_MESSAGE = "The user with id %s does not exist.";
+
   private final UserRepository userRepository;
   
-  public AddContactToUserCommandHandler(Validator validator, UserRepository userRepository) {
-    super(validator);
+  public AddContactToUserCommandHandler(Validator validator, EventResolverFactory eventResolverFactory, UserRepository userRepository) {
+
+    super(validator, eventResolverFactory);
     this.userRepository = userRepository;
   }
   
@@ -40,20 +43,9 @@ public class AddContactToUserCommandHandler extends CommandHandler<AddContactToU
                     new NoSuchElementException(USER_NOT_FOUND_ERROR_MESSAGE.formatted(command.userId())));
     
     var updatedUser = currentUser.addContact(contactId);
+
+    userRepository.addContact(updatedUser.getId(), contactId);
     
     return buildResult(EmptyCommandResponse.VALUE, updatedUser.getCurrentEvents());
-  }
-  
-  protected void processEvents(List<DomainEvent> events) {
-    
-    events.forEach(event -> {
-      
-      switch (event) {
-        
-        case User.AddedContactEvent addedContactEvent ->
-                userRepository.addContact(addedContactEvent.getUserId(), addedContactEvent.getContactId());
-        default -> log.warn("Event not supported {}", event);
-      }
-    });
   }
 }

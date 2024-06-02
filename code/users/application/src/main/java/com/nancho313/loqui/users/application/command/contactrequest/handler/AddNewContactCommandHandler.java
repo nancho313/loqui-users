@@ -5,6 +5,7 @@ import com.nancho313.loqui.users.application.command.EmptyCommandResponse;
 import com.nancho313.loqui.users.application.command.contactrequest.command.AddNewContactCommand;
 import com.nancho313.loqui.users.domain.aggregate.ContactRequest;
 import com.nancho313.loqui.users.domain.event.DomainEvent;
+import com.nancho313.loqui.users.domain.event.EventResolverFactory;
 import com.nancho313.loqui.users.domain.externalservice.IdGenerator;
 import com.nancho313.loqui.users.domain.repository.ContactRequestRepository;
 import com.nancho313.loqui.users.domain.repository.UserRepository;
@@ -30,9 +31,10 @@ public class AddNewContactCommandHandler extends CommandHandler<AddNewContactCom
   
   private final IdGenerator idGenerator;
   
-  public AddNewContactCommandHandler(Validator validator, UserRepository userRepository,
+  public AddNewContactCommandHandler(Validator validator, EventResolverFactory eventResolverFactory,
+                                     UserRepository userRepository,
                                      ContactRequestRepository contactRequestRepository, IdGenerator idGenerator) {
-    super(validator);
+    super(validator, eventResolverFactory);
     this.userRepository = userRepository;
     this.contactRequestRepository = contactRequestRepository;
     this.idGenerator = idGenerator;
@@ -63,11 +65,5 @@ public class AddNewContactCommandHandler extends CommandHandler<AddNewContactCom
             requestedUserId, command.initialMessage()));
     
     return buildResult(EmptyCommandResponse.VALUE, newContactRequest.getCurrentEvents());
-  }
-  
-  protected void processEvents(List<DomainEvent> events) {
-    
-    //TODO trigger events
-    events.forEach(event -> log.info(event.toString()));
   }
 }

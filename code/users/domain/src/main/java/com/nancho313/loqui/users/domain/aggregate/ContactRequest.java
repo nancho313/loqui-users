@@ -21,7 +21,7 @@ import static com.nancho313.loqui.commons.ObjectValidator.isNull;
 
 @Value
 @Builder(access = AccessLevel.PRIVATE, toBuilder = true)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, of = {"contactRequestId"})
 public class ContactRequest extends DomainAggregate {
   
   private static final String INVALID_REQUESTED_USERS_ERROR_MESSAGE = "Requested users are not the same. It should be" +

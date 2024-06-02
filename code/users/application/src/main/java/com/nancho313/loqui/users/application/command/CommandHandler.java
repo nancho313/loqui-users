@@ -3,6 +3,7 @@ package com.nancho313.loqui.users.application.command;
 import com.nancho313.loqui.users.application.exception.InvalidCommandDataException;
 import com.nancho313.loqui.users.application.exception.InvalidResponseDataException;
 import com.nancho313.loqui.users.domain.event.DomainEvent;
+import com.nancho313.loqui.users.domain.event.EventResolverFactory;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
@@ -12,57 +13,70 @@ import java.util.Set;
 
 public abstract class CommandHandler<T extends Command, V extends CommandResponse> {
 
-    private final Validator validator;
+  private final Validator validator;
 
-    public CommandHandler(Validator validator) {
-        this.validator = validator;
+  private final EventResolverFactory eventResolverFactory;
+
+  public CommandHandler(Validator validator, EventResolverFactory eventResolverFactory) {
+    this.validator = validator;
+    this.eventResolverFactory = eventResolverFactory;
+  }
+
+  public V handle(T command) {
+
+    validateCommand(command);
+    var result = handleCommand(command);
+    processEvents(result.events);
+    validateResponse(result.response);
+    return result.response;
+  }
+
+  protected abstract HandleCommandResult<V> handleCommand(T command);
+
+  protected HandleCommandResult<V> buildResult(V response, List<DomainEvent> events) {
+
+    return new HandleCommandResult<>(response, events);
+  }
+
+  protected HandleCommandResult<V> buildEventlessResult(V response) {
+
+    return new HandleCommandResult<>(response, Collections.emptyList());
+  }
+
+  private void validateCommand(T data) {
+
+    if (data == null) {
+
+      throw new IllegalArgumentException("The command to process cannot be null.");
     }
 
-    public V handle(T command) {
+    var errors = validateData(data);
+    if (!errors.isEmpty()) {
 
-        validateCommand(command);
-        var result = handleCommand(command);
-        processEvents(result.events);
-        validateResponse(result.response);
-        return result.response;
+      throw new InvalidCommandDataException(errors);
     }
+  }
 
-    protected abstract HandleCommandResult<V> handleCommand(T command);
+  private void validateResponse(V data) {
 
-    protected abstract void processEvents(List<DomainEvent> events);
-
-    protected HandleCommandResult<V> buildResult(V response, List<DomainEvent> events) {
-
-        return new HandleCommandResult<>(response, events);
+    var errors = validateData(data);
+    if (!errors.isEmpty()) {
+      throw new InvalidResponseDataException(errors);
     }
-    
-    protected HandleCommandResult<V> buildEventlessResult(V response) {
-        
-        return new HandleCommandResult<>(response, Collections.emptyList());
-    }
+  }
 
-    private void validateCommand(T data) {
+  private <Y> List<String> validateData(Y data) {
 
-        var errors = validateData(data);
-        if (!errors.isEmpty()) {
+    Set<ConstraintViolation<Y>> violations = validator.validate(data);
+    return violations.stream().map(ConstraintViolation::getMessage).toList();
+  }
 
-            throw new InvalidCommandDataException(errors);
-        }
-    }
+  private void processEvents(List<DomainEvent> events) {
 
-    private void validateResponse(V data) {
+    events.forEach(event -> eventResolverFactory.getResolver(event)
+            .ifPresent(domainEventResolver -> domainEventResolver.processEvent(event)));
+  }
 
-        var errors = validateData(data);
-        if (!errors.isEmpty()) {
-            throw new InvalidResponseDataException(errors);
-        }
-    }
-
-    private <Y> List<String> validateData(Y data) {
-
-        Set<ConstraintViolation<Y>> violations = validator.validate(data);
-        return violations.stream().map(ConstraintViolation::getMessage).toList();
-    }
-
-    protected record HandleCommandResult <V extends CommandResponse> (V response, List<DomainEvent> events) {}
+  protected record HandleCommandResult<V extends CommandResponse>(V response, List<DomainEvent> events) {
+  }
 }

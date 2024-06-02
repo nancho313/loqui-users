@@ -5,6 +5,7 @@ import com.nancho313.loqui.users.application.command.EmptyCommandResponse;
 import com.nancho313.loqui.users.application.command.user.command.CreateUserCommand;
 import com.nancho313.loqui.users.domain.aggregate.User;
 import com.nancho313.loqui.users.domain.event.DomainEvent;
+import com.nancho313.loqui.users.domain.event.EventResolverFactory;
 import com.nancho313.loqui.users.domain.repository.UserRepository;
 import com.nancho313.loqui.users.domain.vo.UserId;
 import jakarta.validation.Validator;
@@ -19,8 +20,8 @@ public class CreateUserCommandHandler extends CommandHandler<CreateUserCommand, 
   
   private final UserRepository userRepository;
   
-  public CreateUserCommandHandler(Validator validator, UserRepository userRepository) {
-    super(validator);
+  public CreateUserCommandHandler(Validator validator, EventResolverFactory eventResolverFactory, UserRepository userRepository) {
+    super(validator, eventResolverFactory);
     this.userRepository = userRepository;
   }
   
@@ -29,9 +30,5 @@ public class CreateUserCommandHandler extends CommandHandler<CreateUserCommand, 
     var newUser = User.createUser(UserId.of(command.userId()), command.username(), command.email());
     userRepository.save(newUser);
     return buildEventlessResult(EmptyCommandResponse.VALUE);
-  }
-  
-  protected void processEvents(List<DomainEvent> events) {
-  
   }
 }

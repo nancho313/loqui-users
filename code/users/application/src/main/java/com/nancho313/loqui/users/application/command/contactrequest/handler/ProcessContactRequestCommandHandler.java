@@ -29,14 +29,12 @@ public class ProcessContactRequestCommandHandler extends CommandHandler<ProcessC
   
   private final UserRepository userRepository;
   
-  private final EventResolverFactory eventResolverFactory;
-  
-  public ProcessContactRequestCommandHandler(Validator validator, ContactRequestRepository contactRequestRepository,
-                                             UserRepository userRepository, EventResolverFactory eventResolverFactory) {
-    super(validator);
+  public ProcessContactRequestCommandHandler(Validator validator, EventResolverFactory eventResolverFactory,
+                                             ContactRequestRepository contactRequestRepository,
+                                             UserRepository userRepository) {
+    super(validator, eventResolverFactory);
     this.contactRequestRepository = contactRequestRepository;
     this.userRepository = userRepository;
-    this.eventResolverFactory = eventResolverFactory;
   }
   
   protected HandleCommandResult<EmptyCommandResponse> handleCommand(ProcessContactRequestCommand command) {
@@ -56,11 +54,5 @@ public class ProcessContactRequestCommandHandler extends CommandHandler<ProcessC
     contactRequestRepository.save(processedContactRequest);
     
     return buildResult(EmptyCommandResponse.VALUE, processedContactRequest.getCurrentEvents());
-  }
-  
-  protected void processEvents(List<DomainEvent> events) {
-    
-    events.forEach(event -> eventResolverFactory.getResolver(event)
-            .ifPresent(domainEventEventResolver -> domainEventEventResolver.processEvent(event)));
   }
 }
