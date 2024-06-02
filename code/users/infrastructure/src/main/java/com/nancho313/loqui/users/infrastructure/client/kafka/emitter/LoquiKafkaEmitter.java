@@ -30,9 +30,13 @@ public abstract class LoquiKafkaEmitter<T extends SpecificRecordBase> {
     try {
       operation.get(10, TimeUnit.SECONDS);
       return Boolean.TRUE;
-    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+    } catch (ExecutionException | TimeoutException e) {
       
       log.error("There was an error while sending the message.", e);
+      return false;
+    } catch (InterruptedException e) {
+
+      Thread.currentThread().interrupt();
       return false;
     }
   }
