@@ -21,7 +21,7 @@ public class SearchContactsQueryHandler extends QueryHandler<SearchContactsQuery
   
   protected SearchContactsQueryResponse executeQuery(SearchContactsQuery query) {
     
-    return new SearchContactsQueryResponse(userDataSource.searchContacts(query.idUser()).stream()
+    return new SearchContactsQueryResponse(userDataSource.searchContacts(query.userId()).stream()
             .map(contact -> new ContactResultDto(new UserResultDto(contact.id(), contact.username(), contact.email())
                     , contact.status())).toList());
   }
