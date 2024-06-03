@@ -1,4 +1,4 @@
-package com.nancho313.loqui.users.test.application.commandhandler;
+package com.nancho313.loqui.users.test.application.commandhandler.contactrequest;
 
 import com.nancho313.loqui.users.application.command.EmptyCommandResponse;
 import com.nancho313.loqui.users.application.command.contactrequest.command.ProcessContactRequestCommand;

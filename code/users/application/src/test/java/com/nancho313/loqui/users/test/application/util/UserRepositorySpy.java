@@ -8,9 +8,10 @@ import java.util.*;
 
 public class UserRepositorySpy implements UserRepository {
   
-  private final Set<User> data = new HashSet<>();
+  private final List<User> data = new ArrayList<>();
   
   public User save(User user) {
+    data.removeIf(value -> value.getId().equals(user.getId()));
     data.add(user);
     return user;
   }
@@ -33,7 +34,7 @@ public class UserRepositorySpy implements UserRepository {
   }
   
   public void addContact(UserId userId, UserId contactId) {
-  
+
     throw new UnsupportedOperationException("Not supported, yet");
   }
 }

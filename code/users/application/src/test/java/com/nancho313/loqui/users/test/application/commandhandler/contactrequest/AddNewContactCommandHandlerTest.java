@@ -1,4 +1,4 @@
-package com.nancho313.loqui.users.test.application.commandhandler;
+package com.nancho313.loqui.users.test.application.commandhandler.contactrequest;
 
 import com.nancho313.loqui.users.application.command.contactrequest.command.AddNewContactCommand;
 import com.nancho313.loqui.users.application.command.contactrequest.handler.AddNewContactCommandHandler;
@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class AddNewContactCommandHandlerTest {
 
   private EventResolverFactorySpy eventResolverFactorySpy;
-
-  private AddNewContactCommandHandler sut;
   
   private UserRepositorySpy userRepositorySpy;
   
   private ContactRequestRepositorySpy contactRequestRepositorySpy;
+
+  private AddNewContactCommandHandler sut;
   
   @BeforeEach
   void setup() {
