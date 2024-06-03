@@ -35,6 +35,11 @@ public class UserRepositorySpy implements UserRepository {
   
   public void addContact(UserId userId, UserId contactId) {
 
-    throw new UnsupportedOperationException("Not supported, yet");
+    var optionalUser = data.stream().filter(value -> value.getId().equals(userId)).findFirst();
+    if(optionalUser.isPresent()) {
+
+      var user = optionalUser.get().addContact(contactId);
+      this.save(user);
+    }
   }
 }
