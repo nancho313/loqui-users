@@ -27,8 +27,9 @@
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.coverage.exclusions>
             **/UserNeo4jDAO.java,
-            **/infrastructure/**/kafka/emitter/*
-            **/projection/**/*
+            **/infrastructure/**/kafka/emitter/*,
+            **/projection/**/*,
+            **/config/*
         </sonar.coverage.exclusions>
     </properties>
 
@@ -111,6 +112,7 @@
                         <exclude>**/UserNeo4jDAO.java</exclude>
                         <exclude>**/infrastructure/**/kafka/emitter/*</exclude>
                         <exclude>**/projection/**/*</exclude>
+                        <exclude>**/config/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -130,6 +132,7 @@
                         <class>com.nancho313.loqui.users.infrastructure.client.neo4j.dao.UserNeo4jDAO</class>
                         <class>com.nancho313.loqui.users.infrastructure.client.kafka.emitter.*</class>
                         <class>com.nancho313.loqui.users.projection.*</class>
+                        <class>com.nancho313.loqui.users.**.config.*</class>
                     </excludedClasses>
                 </configuration>
             </plugin>
