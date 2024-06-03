@@ -76,6 +76,7 @@
         <module>contract</module>
         <module>boot</module>
         <module>jacoco-coverage</module>
+        <module>pitest-coverage</module>
     </modules>
 
     <distributionManagement>
@@ -128,6 +129,13 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <exportLineCoverage>true</exportLineCoverage>
+                    <outputFormats>
+                        <value>XML</value>
+                    </outputFormats>
+                    <excludedTestClasses>
+                        <testClass>com.nancho313.loqui.users.integrationtest.*</testClass>
+                    </excludedTestClasses>
                     <excludedClasses>
                         <class>com.nancho313.loqui.users.infrastructure.client.neo4j.dao.UserNeo4jDAO</class>
                         <class>com.nancho313.loqui.users.infrastructure.client.kafka.emitter.*</class>
@@ -135,8 +143,15 @@
                         <class>com.nancho313.loqui.users.**.config.*</class>
                     </excludedClasses>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>mutationTests</id>
+                        <goals>
+                            <goal>mutationCoverage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>
