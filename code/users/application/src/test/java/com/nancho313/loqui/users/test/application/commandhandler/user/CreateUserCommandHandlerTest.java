@@ -3,7 +3,7 @@ package com.nancho313.loqui.users.test.application.commandhandler.user;
 import com.nancho313.loqui.users.application.command.EmptyCommandResponse;
 import com.nancho313.loqui.users.application.command.user.command.CreateUserCommand;
 import com.nancho313.loqui.users.application.command.user.handler.CreateUserCommandHandler;
-import com.nancho313.loqui.users.application.exception.InvalidCommandDataException;
+import com.nancho313.loqui.users.application.exception.InvalidInputDataException;
 import com.nancho313.loqui.users.domain.aggregate.User;
 import com.nancho313.loqui.users.domain.vo.UserId;
 import com.nancho313.loqui.users.test.application.util.EventResolverFactorySpy;
@@ -109,7 +109,7 @@ class CreateUserCommandHandlerTest {
     var command = new CreateUserCommand(userId, username, email);
 
     // Act & Assert
-    var exception = assertThrows(InvalidCommandDataException.class, () -> sut.handle(command));
+    var exception = assertThrows(InvalidInputDataException.class, () -> sut.handle(command));
     assertThat(exception.getMessage()).contains(expectedErrorMessage);
   }
 

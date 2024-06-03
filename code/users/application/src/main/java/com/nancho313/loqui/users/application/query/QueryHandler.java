@@ -1,6 +1,6 @@
 package com.nancho313.loqui.users.application.query;
 
-import com.nancho313.loqui.users.application.exception.InvalidCommandDataException;
+import com.nancho313.loqui.users.application.exception.InvalidInputDataException;
 import com.nancho313.loqui.users.application.exception.InvalidResponseDataException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -28,10 +28,15 @@ public abstract class QueryHandler<Q extends Query, R extends QueryResponse> {
 
     private void validateQuery(Q data) {
 
+        if (data == null) {
+
+            throw new IllegalArgumentException("The query to execute cannot be null.");
+        }
+
         var errors = validateData(data);
         if (!errors.isEmpty()) {
 
-            throw new InvalidCommandDataException(errors);
+            throw new InvalidInputDataException(errors);
         }
     }
 

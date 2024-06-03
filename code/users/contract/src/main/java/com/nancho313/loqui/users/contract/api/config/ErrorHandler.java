@@ -1,6 +1,6 @@
 package com.nancho313.loqui.users.contract.api.config;
 
-import com.nancho313.loqui.users.application.exception.InvalidCommandDataException;
+import com.nancho313.loqui.users.application.exception.InvalidInputDataException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +13,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
   
   private static final String UNEXPECTED_ERROR_MESSAGE = "There was an unexpected error while processing your request.";
   
-  @ExceptionHandler({InvalidCommandDataException.class, IllegalArgumentException.class, IllegalStateException.class})
+  @ExceptionHandler({InvalidInputDataException.class, IllegalArgumentException.class, IllegalStateException.class})
   public ResponseEntity<ErrorDto> handleBadRequest(Exception e) {
     
     log.error("Bad Request error.", e);

@@ -1,6 +1,6 @@
 package com.nancho313.loqui.users.application.command;
 
-import com.nancho313.loqui.users.application.exception.InvalidCommandDataException;
+import com.nancho313.loqui.users.application.exception.InvalidInputDataException;
 import com.nancho313.loqui.users.application.exception.InvalidResponseDataException;
 import com.nancho313.loqui.users.domain.event.DomainEvent;
 import com.nancho313.loqui.users.domain.event.EventResolverFactory;
@@ -53,7 +53,7 @@ public abstract class CommandHandler<T extends Command, V extends CommandRespons
     var errors = validateData(data);
     if (!errors.isEmpty()) {
 
-      throw new InvalidCommandDataException(errors);
+      throw new InvalidInputDataException(errors);
     }
   }
 

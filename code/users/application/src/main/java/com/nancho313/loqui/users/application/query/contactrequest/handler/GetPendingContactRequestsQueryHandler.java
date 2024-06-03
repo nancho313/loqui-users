@@ -23,14 +23,14 @@ public class GetPendingContactRequestsQueryHandler extends QueryHandler<GetPendi
   
   protected GetPendingContactRequestsQueryResponse executeQuery(GetPendingContactRequestsQuery query) {
     
-    var contactRequests = dataSource.getContactRequests(query.idUser(), ContactRequestStatus.PENDING.name());
+    var contactRequests = dataSource.getContactRequests(query.userId(), ContactRequestStatus.PENDING.name());
     
     var sentRequests =
-            contactRequests.stream().filter(request -> request.requesterUser().equals(query.idUser()))
+            contactRequests.stream().filter(request -> request.requesterUser().equals(query.userId()))
                     .map(this::toContactRequestDataDto).toList();
     
     var receivedRequests =
-            contactRequests.stream().filter(request -> request.requestedUser().equals(query.idUser()))
+            contactRequests.stream().filter(request -> request.requestedUser().equals(query.userId()))
                     .map(this::toContactRequestDataDto).toList();
     
     return new GetPendingContactRequestsQueryResponse(sentRequests, receivedRequests);

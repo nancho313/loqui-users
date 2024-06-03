@@ -2,7 +2,7 @@ package com.nancho313.loqui.users.test.application.commandhandler.contactrequest
 
 import com.nancho313.loqui.users.application.command.contactrequest.command.AddNewContactCommand;
 import com.nancho313.loqui.users.application.command.contactrequest.handler.AddNewContactCommandHandler;
-import com.nancho313.loqui.users.application.exception.InvalidCommandDataException;
+import com.nancho313.loqui.users.application.exception.InvalidInputDataException;
 import com.nancho313.loqui.users.domain.aggregate.ContactRequest;
 import com.nancho313.loqui.users.domain.aggregate.User;
 import com.nancho313.loqui.users.domain.vo.ContactRequestId;
@@ -155,7 +155,7 @@ class AddNewContactCommandHandlerTest {
     var command = new AddNewContactCommand(userId, contactId, initialMessage);
 
     // Act & Assert
-    var exception = assertThrows(InvalidCommandDataException.class, ()-> sut.handle(command));
+    var exception = assertThrows(InvalidInputDataException.class, ()-> sut.handle(command));
     assertThat(exception.getMessage()).contains(expectedErrorMessage);
   }
 

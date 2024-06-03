@@ -3,7 +3,7 @@ package com.nancho313.loqui.users.test.application.commandhandler.user;
 import com.nancho313.loqui.users.application.command.EmptyCommandResponse;
 import com.nancho313.loqui.users.application.command.user.command.AddContactToUserCommand;
 import com.nancho313.loqui.users.application.command.user.handler.AddContactToUserCommandHandler;
-import com.nancho313.loqui.users.application.exception.InvalidCommandDataException;
+import com.nancho313.loqui.users.application.exception.InvalidInputDataException;
 import com.nancho313.loqui.users.domain.aggregate.User;
 import com.nancho313.loqui.users.domain.vo.ContactStatus;
 import com.nancho313.loqui.users.domain.vo.UserId;
@@ -168,7 +168,7 @@ class AddContactToUserCommandHandlerTest {
     var command = new AddContactToUserCommand(userId, contactId);
 
     // Act & Assert
-    var exception = assertThrows(InvalidCommandDataException.class, () -> sut.handle(command));
+    var exception = assertThrows(InvalidInputDataException.class, () -> sut.handle(command));
     assertThat(exception.getMessage()).contains(expectedErrorMessage);
   }
 
