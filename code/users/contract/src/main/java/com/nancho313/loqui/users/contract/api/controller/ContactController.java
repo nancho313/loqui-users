@@ -46,7 +46,7 @@ public class ContactController {
     
     var command = new AddNewContactCommand(authUser.userId(), request.contactId(), request.initialMessage());
     addNewContactCommandHandler.handle(command);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
   
   @PostMapping("/request/{id}")
@@ -56,7 +56,7 @@ public class ContactController {
     
     var command = new ProcessContactRequestCommand(contactRequestId, authUser.userId(), request.accept());
     processContactRequestCommandHandler.handle(command);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
   
   @GetMapping("/request")
