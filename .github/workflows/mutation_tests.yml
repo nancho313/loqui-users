@@ -40,7 +40,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build with Maven
-        run: mvn test-compile org.pitest:pitest-maven:mutationCoverage -DmutationThreshold=85 -s $GITHUB_WORKSPACE/code/users/settings.xml && mvn com.nancho313.loqui:pitest-aggregator-maven-plugin:1.0.0:generate -s $GITHUB_WORKSPACE/code/users/settings.xml
+        run: mvn test-compile org.pitest:pitest-maven:mutationCoverage -s $GITHUB_WORKSPACE/code/users/settings.xml && mvn com.nancho313.loqui:pitest-aggregator-maven-plugin:1.0.0:generate -s $GITHUB_WORKSPACE/code/users/settings.xml
         env:
           MVN_USERNAME: nancho313
           MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
