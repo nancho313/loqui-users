@@ -2,6 +2,10 @@ name: Run integration tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'feature/**'
 jobs:
   build:
     runs-on: ubuntu-latest
