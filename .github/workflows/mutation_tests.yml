@@ -17,7 +17,7 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
@@ -41,6 +41,13 @@ jobs:
 
       - name: Run mutation tests
         run: mvn test-compile org.pitest:pitest-maven:mutationCoverage -s $GITHUB_WORKSPACE/code/users/settings.xml
+        env:
+          MVN_USERNAME: nancho313
+          MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Maven Version
+        run: mvn -version
         env:
           MVN_USERNAME: nancho313
           MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
