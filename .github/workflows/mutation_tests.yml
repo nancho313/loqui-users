@@ -57,8 +57,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mutation-tests-result
-          path: |
-            pitest-coverage/target
-            ./pitest-coverage/target
-            target
-            ./target
+          path: ./code/users/pitest-coverage/target
