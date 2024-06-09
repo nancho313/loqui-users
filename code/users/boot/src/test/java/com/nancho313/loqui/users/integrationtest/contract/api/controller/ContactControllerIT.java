@@ -4,18 +4,16 @@ import com.nancho313.loqui.events.AcceptedContactRequestEvent;
 import com.nancho313.loqui.users.domain.aggregate.User;
 import com.nancho313.loqui.users.domain.repository.UserRepository;
 import com.nancho313.loqui.users.domain.vo.UserId;
-import com.nancho313.loqui.users.infrastructure.client.kafka.emitter.AcceptedContactRequestKafkaEmitter;
 import com.nancho313.loqui.users.infrastructure.client.mongodb.dao.ContactRequestMongodbDAO;
 import com.nancho313.loqui.users.infrastructure.client.mongodb.document.ContactRequestDocument;
 import com.nancho313.loqui.users.integrationtest.BaseIntegrationTest;
 import com.nancho313.loqui.users.integrationtest.contract.api.util.TestFilter;
+import com.nancho313.loqui.users.integrationtest.util.KafkaMessageCaptor;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,12 +24,10 @@ import java.net.URI;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ContactControllerIT extends BaseIntegrationTest {
 
@@ -39,8 +35,6 @@ public class ContactControllerIT extends BaseIntegrationTest {
 
   @Autowired
   private WebApplicationContext context;
-
-  private MockMvc mockMvc;
 
   @Autowired
   private UserRepository userRepository;
@@ -51,27 +45,29 @@ public class ContactControllerIT extends BaseIntegrationTest {
   @Autowired
   private Neo4jClient neo4jClient;
 
-  @SpyBean
-  private AcceptedContactRequestKafkaEmitter acceptedContactRequestKafkaEmitter;
+  @Autowired
+  private KafkaMessageCaptor<AcceptedContactRequestEvent> messageCaptor;
+
+  private MockMvc mockMvc;
 
   @BeforeEach
   void setup() {
 
     mockMvc = MockMvcBuilders
-        .webAppContextSetup(context)
-        .addFilter(AUTH_TEST_FILTER, "/*")
-        .build();
+            .webAppContextSetup(context)
+            .addFilter(AUTH_TEST_FILTER, "/*")
+            .build();
   }
 
   @AfterEach
   void tearDown() {
 
     neo4jClient.query("""
-        MATCH (n)
-        DETACH DELETE n
-        """).run();
+            MATCH (n)
+            DETACH DELETE n""").run();
 
     contactRequestMongodbDAO.deleteAll();
+    messageCaptor.cleanMessages();
   }
 
   @Test
@@ -87,23 +83,23 @@ public class ContactControllerIT extends BaseIntegrationTest {
 
     // Act & Assert
     mockMvc.perform(get(uri)
-            .header("test_user_id", userToSave1.getId().id())
-            .header("test_username", userToSave1.getUsername()))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(content().json("""
-            {
-              "contacts": [
-                {
-                  "user": {
-                    "id": "22222",
-                    "username": "foo2",
-                    "email": "foo2@foo.com"
-                  },
-                  "status": "AVAILABLE"
-                }
-              ]
-            }"""));
+                    .header("test_user_id", userToSave1.getId().id())
+                    .header("test_username", userToSave1.getUsername()))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().json("""
+                    {
+                      "contacts": [
+                        {
+                          "user": {
+                            "id": "22222",
+                            "username": "foo2",
+                            "email": "foo2@foo.com"
+                          },
+                          "status": "AVAILABLE"
+                        }
+                      ]
+                    }"""));
   }
 
   @Test
@@ -116,14 +112,14 @@ public class ContactControllerIT extends BaseIntegrationTest {
 
     // Act & Assert
     mockMvc.perform(get(uri)
-            .header("test_user_id", userToSave1.getId().id())
-            .header("test_username", userToSave1.getUsername()))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(content().json("""
-            {
-              "contacts": []
-            }"""));
+                    .header("test_user_id", userToSave1.getId().id())
+                    .header("test_username", userToSave1.getUsername()))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().json("""
+                    {
+                      "contacts": []
+                    }"""));
   }
 
   @Test
@@ -137,20 +133,20 @@ public class ContactControllerIT extends BaseIntegrationTest {
     userRepository.save(userToSave2);
 
     var payload = """
-        {
-          "contactId": 22222,
-          "initialMessage": "Greetings!!!!"
-        }
-        """;
+            {
+              "contactId": 22222,
+              "initialMessage": "Greetings!!!!"
+            }
+            """;
 
     // Act & Assert
     mockMvc.perform(post(uri)
-            .content(payload)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header("test_user_id", userToSave1.getId().id())
-            .header("test_username", userToSave1.getUsername()))
-        .andDo(print())
-        .andExpect(status().isNoContent());
+                    .content(payload)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("test_user_id", userToSave1.getId().id())
+                    .header("test_username", userToSave1.getUsername()))
+            .andDo(print())
+            .andExpect(status().isNoContent());
 
     var allContactRequests = contactRequestMongodbDAO.findAll();
     assertThat(allContactRequests).isNotNull().hasSize(1);
@@ -171,35 +167,35 @@ public class ContactControllerIT extends BaseIntegrationTest {
     userRepository.save(userToSave2);
     ContactRequestDocument document = buildContactRequestDocument(userToSave2.getId().id(), userToSave1.getId().id(), "PENDING");
     contactRequestMongodbDAO.save(document);
-    var uri = URI.create("/v1/contact/request/"+document.id());
+    var uri = URI.create("/v1/contact/request/" + document.id());
 
     var payload = """
-        {
-          "accept" : true
-        }
-        """;
+            {
+              "accept" : true
+            }
+            """;
 
     // Act & Assert
     mockMvc.perform(post(uri)
-            .content(payload)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header("test_user_id", userToSave1.getId().id())
-            .header("test_username", userToSave1.getUsername()))
-        .andDo(print())
-        .andExpect(status().isNoContent());
+                    .content(payload)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("test_user_id", userToSave1.getId().id())
+                    .header("test_username", userToSave1.getUsername()))
+            .andDo(print())
+            .andExpect(status().isNoContent());
 
     var allContactRequests = contactRequestMongodbDAO.findAll();
     assertThat(allContactRequests).isNotNull().hasSize(1);
     var storedContactRequest = allContactRequests.getFirst();
     assertThat(storedContactRequest.status()).isEqualTo("ACCEPTED");
 
-    var argCaptor = ArgumentCaptor.forClass(AcceptedContactRequestEvent.class);
-    verify(acceptedContactRequestKafkaEmitter).sendMessage(argCaptor.capture(), anyList());
-    var capturedValue = argCaptor.getValue();
-    assertThat(capturedValue).isNotNull();
-    assertThat(capturedValue.getContactRequestId()).hasToString(document.id());
-    assertThat(capturedValue.getRequestedUser()).hasToString(document.requestedUser());
-    assertThat(capturedValue.getRequesterUser()).hasToString(document.requesterUser());
+    var sentMessages = messageCaptor.getCapturedMessages();
+    assertThat(sentMessages).isNotNull().hasSize(1);
+    var sentMessage = sentMessages.getFirst().getPayload();
+    assertThat(sentMessage).isNotNull();
+    assertThat(sentMessage.getContactRequestId()).hasToString(document.id());
+    assertThat(sentMessage.getRequestedUser()).hasToString(document.requestedUser());
+    assertThat(sentMessage.getRequesterUser()).hasToString(document.requesterUser());
   }
 
   @Test
@@ -212,22 +208,22 @@ public class ContactControllerIT extends BaseIntegrationTest {
     userRepository.save(userToSave2);
     ContactRequestDocument document = buildContactRequestDocument(userToSave2.getId().id(), userToSave1.getId().id(), "PENDING");
     contactRequestMongodbDAO.save(document);
-    var uri = URI.create("/v1/contact/request/"+document.id());
+    var uri = URI.create("/v1/contact/request/" + document.id());
 
     var payload = """
-        {
-          "accept" : false
-        }
-        """;
+            {
+              "accept" : false
+            }
+            """;
 
     // Act & Assert
     mockMvc.perform(post(uri)
-            .content(payload)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header("test_user_id", userToSave1.getId().id())
-            .header("test_username", userToSave1.getUsername()))
-        .andDo(print())
-        .andExpect(status().isNoContent());
+                    .content(payload)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("test_user_id", userToSave1.getId().id())
+                    .header("test_username", userToSave1.getUsername()))
+            .andDo(print())
+            .andExpect(status().isNoContent());
 
     var allContactRequests = contactRequestMongodbDAO.findAll();
     assertThat(allContactRequests).isNotNull().hasSize(1);
@@ -245,26 +241,26 @@ public class ContactControllerIT extends BaseIntegrationTest {
     userRepository.save(userToSave2);
     ContactRequestDocument document = buildContactRequestDocument(userToSave2.getId().id(), userToSave1.getId().id(), "REJECTED");
     contactRequestMongodbDAO.save(document);
-    var uri = URI.create("/v1/contact/request/"+document.id());
+    var uri = URI.create("/v1/contact/request/" + document.id());
 
     var payload = """
-        {
-          "accept" : true
-        }
-        """;
+            {
+              "accept" : true
+            }
+            """;
 
     // Act & Assert
     mockMvc.perform(post(uri)
-            .content(payload)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header("test_user_id", userToSave1.getId().id())
-            .header("test_username", userToSave1.getUsername()))
-        .andDo(print())
-        .andExpect(status().isBadRequest())
-        .andExpect(content().json("""
-            {
-              "message": "Invalid status permutation. The ContactRequest %s cannot change from REJECTED to ACCEPTED."
-            }""".formatted(document.id())));
+                    .content(payload)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("test_user_id", userToSave1.getId().id())
+                    .header("test_username", userToSave1.getUsername()))
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(content().json("""
+                    {
+                      "message": "Invalid status permutation. The ContactRequest %s cannot change from REJECTED to ACCEPTED."
+                    }""".formatted(document.id())));
 
     var allContactRequests = contactRequestMongodbDAO.findAll();
     assertThat(allContactRequests).isNotNull().hasSize(1);
@@ -290,27 +286,45 @@ public class ContactControllerIT extends BaseIntegrationTest {
 
     // Act & Assert
     mockMvc.perform(get(uri)
-            .header("test_user_id", userToSave1.getId().id())
-            .header("test_username", userToSave1.getUsername()))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(content().json("""
-            {
-              "sentRequests": [
-                {
-                  "requestedUser": "33333",
-                  "requesterUser": "11111",
-                  "message": "Greetings"
-                }
-              ],
-              "receivedRequests": [
-                {
-                  "requestedUser": "11111",
-                  "requesterUser": "22222",
-                  "message": "Greetings"
-                }
-              ]
-            }"""));
+                    .header("test_user_id", userToSave1.getId().id())
+                    .header("test_username", userToSave1.getUsername()))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().json("""
+                    {
+                      "sentRequests": [
+                        {
+                          "requestedUser": "33333",
+                          "requesterUser": "11111",
+                          "message": "Greetings"
+                        }
+                      ],
+                      "receivedRequests": [
+                        {
+                          "requestedUser": "11111",
+                          "requesterUser": "22222",
+                          "message": "Greetings"
+                        }
+                      ]
+                    }"""));
+  }
+
+  @Test
+  void getContactRequestsReturnsEmptyData() throws Exception {
+
+    // Arrange
+    var uri = URI.create("/v1/contact/request");
+    var userToSave1 = User.createUser(UserId.of("11111"), "foo1", "foo1@foo.com");
+    userRepository.save(userToSave1);
+
+    // Act & Assert
+    mockMvc.perform(get(uri)
+                    .header("test_user_id", userToSave1.getId().id())
+                    .header("test_username", userToSave1.getUsername()))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.sentRequests").isEmpty())
+            .andExpect(jsonPath("$.receivedRequests").isEmpty());
   }
 
   private ContactRequestDocument buildContactRequestDocument(String requesterUser, String requestedUser, String status) {

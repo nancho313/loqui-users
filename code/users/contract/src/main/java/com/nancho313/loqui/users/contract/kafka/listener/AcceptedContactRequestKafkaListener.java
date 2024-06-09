@@ -17,7 +17,7 @@ public class AcceptedContactRequestKafkaListener {
   
   private final CommandHandler<AddContactToUserCommand, EmptyCommandResponse> commandHandler;
   
-  @KafkaListener(topics = "accepted-contact-request")
+  @KafkaListener(topics = "accepted-contact-request", groupId = "loqui-users")
   public void consumeMessage(Message<AcceptedContactRequestEvent> message) {
     
     var value = message.getPayload();

@@ -9,6 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 @ImportTestcontainers(TestContainerConfiguration.class)
 @ContextConfiguration(
         initializers = {TestContainerConfiguration.KafkaServerInitializer.class},
-        classes = UsersApplication.class)
+        classes = {UsersApplication.class, ITConfiguration.class})
 public abstract class BaseIntegrationTest {
 }
