@@ -40,7 +40,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Run mutation tests
-        run: mvn test-compile org.pitest:pitest-maven:mutationCoverage -s $GITHUB_WORKSPACE/code/users/settings.xml
+        run: mvn test-compile org.pitest:pitest-maven:mutationCoverage -Dskipmutationtests=false -s $GITHUB_WORKSPACE/code/users/settings.xml
         env:
           MVN_USERNAME: nancho313
           MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
