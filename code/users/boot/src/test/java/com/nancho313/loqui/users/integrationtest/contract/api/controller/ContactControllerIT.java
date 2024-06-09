@@ -19,15 +19,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 public class ContactControllerIT extends BaseIntegrationTest {
 
@@ -188,6 +191,8 @@ public class ContactControllerIT extends BaseIntegrationTest {
     assertThat(allContactRequests).isNotNull().hasSize(1);
     var storedContactRequest = allContactRequests.getFirst();
     assertThat(storedContactRequest.status()).isEqualTo("ACCEPTED");
+
+    await().atMost(3, TimeUnit.SECONDS).until(()-> !messageCaptor.getCapturedMessages().isEmpty());
 
     var sentMessages = messageCaptor.getCapturedMessages();
     assertThat(sentMessages).isNotNull().hasSize(1);
