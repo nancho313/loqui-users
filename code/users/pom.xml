@@ -31,7 +31,6 @@
             **/projection/**/*,
             **/config/*
         </sonar.coverage.exclusions>
-        <skipits>true</skipits>
         <skipmutationtests>true</skipmutationtests>
     </properties>
 
@@ -154,13 +153,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <skipITs>${skipits}</skipITs>
-                </configuration>
             </plugin>
         </plugins>
     </build>
