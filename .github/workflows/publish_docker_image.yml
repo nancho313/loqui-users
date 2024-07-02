@@ -43,6 +43,11 @@ jobs:
         MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Login Github Docker Packages
+      run: export CR_PAT=${GITHUB_TOKEN} | docker login ghcr.io -u username --password-stdin
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Build Docker image
       run: docker build . --tag ghcr.io/nancho313/loqui-users:1.0.0
       env:
@@ -50,5 +55,3 @@ jobs:
 
     - name: Push Docker image
       run: docker push ghcr.io/nancho313/loqui-users:1.0.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
