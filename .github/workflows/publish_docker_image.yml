@@ -2,11 +2,12 @@ name: Publish Docker Image
 
 on:
   workflow_dispatch:
-
+  release:
+    types: [published]
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: loqui-users
-  IMAGE_VERSION: 1.0.0
+  IMAGE_VERSION: SNAPSHOT
 
 jobs:
   build:
@@ -47,6 +48,10 @@ jobs:
         MVN_USERNAME: nancho313
         MVN_PASSWORD: ${{ secrets.LOQUI_POM_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set Image Version
+      if: ${{ github.event.release.tag_name != null }}
+      run: echo "IMAGE_VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
 
     - name: Log in to the Container registry
       uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
